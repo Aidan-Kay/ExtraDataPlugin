@@ -1,0 +1,18 @@
+# ExtraDataPlugin
+A plugin for SimHub to add extra properties. Currently designed for ACC in particular, with iRacing additions in progress.
+
+Main additions include extra leaderboard data and colour gradients with multiple colour stops, rather than just the 3 that SimHub provides. 
+
+# To-do
+- Better laps remaining estimation
+- Fuel to add estimation
+
+Leaderboard data:
+- iRacing car classes & colours
+- iRacing license text
+- iRacing incident count
+- Pit count
+
+New features:
+- NCalc Changed() equivalent
+- Ability to save optimal clutch bites per car for dual clutch paddles
