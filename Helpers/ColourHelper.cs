@@ -11,6 +11,9 @@ namespace AidanKay.ExtraDataPlugin
     {
         public static Color GradientPick(double value, ColourGradient gradient)
         {
+            if (gradient.Count == 0)
+                return new Color();
+
             if (value < gradient.Keys.Min())
                 return gradient[gradient.Keys.Min()];
             if (value > gradient.Keys.Max())
@@ -20,15 +23,16 @@ namespace AidanKay.ExtraDataPlugin
 
             for (int i = 0; i < keys.Length; i++)
             {
-                // if value matches one of the defined gradient values
                 if (value == keys[i])
+                    // if value matches one of the defined colour stops
                     return gradient[keys[i]];
-                // Found two gradient values that our value sits between - calculate color (value - startValue) / (endValue - startValue)
+                
                 else if (value > keys[i] && value < keys[i + 1])
+                    // Found two colour stops that our value sits between - calculate color based on distance between the two colour stops
                     return ColorInterpolate(gradient[keys[i]], gradient[keys[i + 1]], Math.Abs((value - keys[i]) / (keys[i + 1] - keys[i])));
             }
 
-            // Should never reach here given previous conditions
+            // Should never reach here given previous conditions - figure out a way where this isn't needed...
             return new Color();
         }
 

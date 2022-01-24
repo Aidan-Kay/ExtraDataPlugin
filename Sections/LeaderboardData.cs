@@ -66,8 +66,11 @@ namespace AidanKay.ExtraDataPlugin.Sections
                     if (opponent == null)
                         return;
 
+                    // TODO:
+                    // iR car classes & colours
+                    // iR license text
+                    // iR inc count
                     // pit count
-                    // penalties
 
                     Drivers[i].Position.Value = opponent.Position;
                     Drivers[i].CarName.Value = opponent.CarName;
