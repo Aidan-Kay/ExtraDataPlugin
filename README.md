@@ -12,6 +12,7 @@ Leaderboard data:
 - iRacing license text
 - iRacing incident count
 - Pit count
+- Last pit lap
 
 New features:
 - NCalc Changed() equivalent
