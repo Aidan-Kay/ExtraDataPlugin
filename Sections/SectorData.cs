@@ -35,7 +35,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
         public SectorData(ExtraDataPlugin extraDataPlugin) : base(extraDataPlugin) { }
 
-        public override void Update()
+        public override void DataUpdate()
         {
             SetLastSectorTimes();
             SetPersonalBestSectorTimes();

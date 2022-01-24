@@ -19,6 +19,6 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
         protected abstract void AttachProperties(PluginManager pluginManager);
 
-        public abstract void Update();
+        public abstract void DataUpdate();
     }
 }

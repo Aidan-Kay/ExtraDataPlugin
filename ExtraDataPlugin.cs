@@ -1,6 +1,8 @@
-﻿using GameReaderCommon;
+﻿using AidanKay.ExtraDataPlugin.Sections;
+using GameReaderCommon;
 using SimHub.Plugins;
 using System;
+using System.Collections.Generic;
 
 namespace AidanKay.ExtraDataPlugin
 {
@@ -11,17 +13,9 @@ namespace AidanKay.ExtraDataPlugin
     {
         public PluginManager PluginManager { get; set; }
 
-        public ExtraDataPluginSettings Settings;
+        internal AllGameData AllGameData = new AllGameData();
 
-        internal AllGameData AllGameData;
-
-        internal Sections.SectionBase SessionData;
-        internal Sections.SectionBase CarData;
-        internal Sections.SectionBase FuelData;
-        internal Sections.SectionBase TyreData;
-        internal Sections.SectionBase LapData;
-        internal Sections.SectionBase SectorData;
-        internal Sections.SectionBase LeaderboardData;
+        internal List<SectionBase> Sections = new List<SectionBase>();
 
         internal bool UpdateAt1Fps;
         internal bool UpdateAt2Fps;
@@ -42,15 +36,7 @@ namespace AidanKay.ExtraDataPlugin
         {
             SimHub.Logging.Current.Info("Starting plugin: ExtraDataPlugin");
 
-            AllGameData = new AllGameData();
-
-            SessionData = new Sections.SessionData(this);
-            CarData = new Sections.CarData(this);
-            FuelData = new Sections.FuelData(this);
-            TyreData = new Sections.TyreData(this);
-            LapData = new Sections.LapData(this);
-            SectorData = new Sections.SectorData(this);
-            LeaderboardData = new Sections.LeaderboardData(this);
+            InitSections();
         }
 
         public void DataUpdate(PluginManager pluginManager, ref GameData data)
@@ -66,13 +52,8 @@ namespace AidanKay.ExtraDataPlugin
                 UpdateAt5Fps = nowTicks - LastRan5Fps >= TicksFor5Fps;
                 UpdateAt10Fps = nowTicks - LastRan10Fps >= TicksFor10Fps;
 
-                SessionData.Update();
-                CarData.Update();
-                FuelData.Update();
-                TyreData.Update();
-                LapData.Update();
-                SectorData.Update();
-                LeaderboardData.Update();
+                foreach (SectionBase section in Sections)
+                    section.DataUpdate();
 
                 if (UpdateAt1Fps)
                     LastRan1Fps = DateTime.Now.Ticks;
@@ -87,15 +68,21 @@ namespace AidanKay.ExtraDataPlugin
                 ClearAllProperties();
         }
 
+        private void InitSections()
+        {
+            Sections.Add(new SessionData(this));
+            Sections.Add(new CarData(this));
+            Sections.Add(new FuelData(this));
+            Sections.Add(new TyreData(this));
+            Sections.Add(new LapData(this));
+            Sections.Add(new SectorData(this));
+            Sections.Add(new LeaderboardData(this));
+        }
+
         public void ClearAllProperties()
         {
-            SessionData = new Sections.SessionData(this);
-            CarData = new Sections.CarData(this);
-            FuelData = new Sections.FuelData(this);
-            TyreData = new Sections.TyreData(this);
-            LapData = new Sections.LapData(this);
-            SectorData = new Sections.SectorData(this);
-            LeaderboardData = new Sections.LeaderboardData(this);
+            Sections.Clear();
+            InitSections();
         }
 
         public void End(PluginManager pluginManager) { }

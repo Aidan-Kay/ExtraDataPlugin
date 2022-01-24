@@ -13,7 +13,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
         public FuelData(ExtraDataPlugin extraDataPlugin) : base(extraDataPlugin) { }
 
-        public override void Update()
+        public override void DataUpdate()
         {
             if (Plugin.UpdateAt10Fps)
             {

@@ -88,7 +88,6 @@
     <Compile Include="Sections\CarData.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ExtraDataPlugin.cs" />
-    <Compile Include="ExtraDataPluginSettings.cs" />
     <Compile Include="Helpers\ColourHelper.cs" />
     <Compile Include="Helpers\CommonHelper.cs" />
     <Compile Include="Driver.cs" />

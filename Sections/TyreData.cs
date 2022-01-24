@@ -61,7 +61,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
         public TyreData(ExtraDataPlugin extraDataPlugin) : base(extraDataPlugin) { }
 
-        public override void Update()
+        public override void DataUpdate()
         {
             if (Plugin.UpdateAt10Fps)
             {

@@ -11,7 +11,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
         public LeaderboardData(ExtraDataPlugin extraDataPlugin) : base(extraDataPlugin) { }
 
-        public override void Update()
+        public override void DataUpdate()
         {
             UpdateDrivers();
         }

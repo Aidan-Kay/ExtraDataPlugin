@@ -13,7 +13,8 @@ namespace AidanKay.ExtraDataPlugin
 
         public void AssignSpecificGameData()
         {
-            if (GameData == null) return;
+            if (GameData == null)
+                return;
 
             if (GameData.GameName == "AssettoCorsaCompetizione")
             {
@@ -22,9 +23,7 @@ namespace AidanKay.ExtraDataPlugin
             }
 
             if (GameData.GameName == "IRacing")
-            {
                 IRacingRawGameData = GameData.NewData.GetRawDataObject() as DataSampleEx;
-            }
         }
     }
 }

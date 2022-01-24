@@ -19,7 +19,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
         public CarData(ExtraDataPlugin extraDataPlugin) : base(extraDataPlugin) { }
 
-        public override void Update()
+        public override void DataUpdate()
         {
             if (Plugin.UpdateAt10Fps)
             {

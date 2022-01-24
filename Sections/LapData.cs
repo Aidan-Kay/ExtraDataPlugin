@@ -31,7 +31,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
         public LapData(ExtraDataPlugin extraDataPlugin) : base(extraDataPlugin) { }
 
-        public override void Update()
+        public override void DataUpdate()
         {
             SetSessionBestLapTimes();
             SetAllTimeBestLapTimes();
