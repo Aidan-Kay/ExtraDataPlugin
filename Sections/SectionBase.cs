@@ -14,10 +14,10 @@ namespace AidanKay.ExtraDataPlugin.Sections
         public SectionBase(ExtraDataPlugin extraDataPlugin)
         {
             Plugin = extraDataPlugin;
-            AttachProperties(extraDataPlugin.PluginManager);
+            Init(extraDataPlugin.PluginManager);
         }
 
-        protected abstract void AttachProperties(PluginManager pluginManager);
+        protected abstract void Init(PluginManager pluginManager);
 
         public abstract void DataUpdate();
     }

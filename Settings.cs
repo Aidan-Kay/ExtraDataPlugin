@@ -7,8 +7,9 @@ namespace AidanKay.ExtraDataPlugin
 {
     internal static class Settings
     {
-        public static int LeaderboardNumberOfDrivers = 20;
+        public static int LeaderboardNumberOfDrivers = 64;
 
+        // Royal Blue, Lime Green, Firebrick
 
         // https://coachdaveacademy.com/tutorials/the-ultimate-acc-car-setup-guide/
 

@@ -32,7 +32,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
             }
         }
 
-        protected override void AttachProperties(PluginManager pluginManager)
+        protected override void Init(PluginManager pluginManager)
         {
             Plugin.AttachProperty("CarData.BrakeTemperatureFrontLeft", BrakeTemperatureFrontLeft);
             Plugin.AttachProperty("CarData.BrakeTemperatureFrontRight", BrakeTemperatureFrontRight);

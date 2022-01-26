@@ -28,7 +28,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
             }
         }
 
-        protected override void AttachProperties(PluginManager pluginManager)
+        protected override void Init(PluginManager pluginManager)
         {
             Plugin.AttachProperty("SessionData.AirTemperature", AirTemperature);
             Plugin.AttachProperty("SessionData.TrackTemperature", TrackTemperature);

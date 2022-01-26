@@ -24,7 +24,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
             }
         }
 
-        protected override void AttachProperties(PluginManager pluginManager)
+        protected override void Init(PluginManager pluginManager)
         {
             Plugin.AttachProperty("FuelData.CurrentFuel", CurrentFuel);
             Plugin.AttachProperty("FuelData.FuelLastLap", FuelLastLap);

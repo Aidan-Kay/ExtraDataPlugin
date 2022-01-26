@@ -44,20 +44,20 @@ namespace AidanKay.ExtraDataPlugin.Sections
         public AttachedProperty<string> TyreTemperatureRearLeftColour = new AttachedProperty<string>();
         public AttachedProperty<string> TyreTemperatureRearRightColour = new AttachedProperty<string>();
 
-        public AttachedProperty<double?> TyreTemperatureFrontLeftInnerColour = new AttachedProperty<double?>();
-        public AttachedProperty<double?> TyreTemperatureFrontRightInnerColour = new AttachedProperty<double?>();
-        public AttachedProperty<double?> TyreTemperatureRearLeftInnerColour = new AttachedProperty<double?>();
-        public AttachedProperty<double?> TyreTemperatureRearRightInnerColour = new AttachedProperty<double?>();
+        public AttachedProperty<string> TyreTemperatureFrontLeftInnerColour = new AttachedProperty<string>();
+        public AttachedProperty<string> TyreTemperatureFrontRightInnerColour = new AttachedProperty<string>();
+        public AttachedProperty<string> TyreTemperatureRearLeftInnerColour = new AttachedProperty<string>();
+        public AttachedProperty<string> TyreTemperatureRearRightInnerColour = new AttachedProperty<string>();
 
-        public AttachedProperty<double?> TyreTemperatureFrontLeftMiddleColour = new AttachedProperty<double?>();
-        public AttachedProperty<double?> TyreTemperatureFrontRightMiddleColour = new AttachedProperty<double?>();
-        public AttachedProperty<double?> TyreTemperatureRearLeftMiddleColour = new AttachedProperty<double?>();
-        public AttachedProperty<double?> TyreTemperatureRearRightMiddleColour = new AttachedProperty<double?>();
+        public AttachedProperty<string> TyreTemperatureFrontLeftMiddleColour = new AttachedProperty<string>();
+        public AttachedProperty<string> TyreTemperatureFrontRightMiddleColour = new AttachedProperty<string>();
+        public AttachedProperty<string> TyreTemperatureRearLeftMiddleColour = new AttachedProperty<string>();
+        public AttachedProperty<string> TyreTemperatureRearRightMiddleColour = new AttachedProperty<string>();
 
-        public AttachedProperty<double?> TyreTemperatureFrontLeftOuterColour = new AttachedProperty<double?>();
-        public AttachedProperty<double?> TyreTemperatureFrontRightOuterColour = new AttachedProperty<double?>();
-        public AttachedProperty<double?> TyreTemperatureRearLeftOuterColour = new AttachedProperty<double?>();
-        public AttachedProperty<double?> TyreTemperatureRearRightOuterColour = new AttachedProperty<double?>();
+        public AttachedProperty<string> TyreTemperatureFrontLeftOuterColour = new AttachedProperty<string>();
+        public AttachedProperty<string> TyreTemperatureFrontRightOuterColour = new AttachedProperty<string>();
+        public AttachedProperty<string> TyreTemperatureRearLeftOuterColour = new AttachedProperty<string>();
+        public AttachedProperty<string> TyreTemperatureRearRightOuterColour = new AttachedProperty<string>();
 
         public TyreData(ExtraDataPlugin extraDataPlugin) : base(extraDataPlugin) { }
 
@@ -78,7 +78,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
             }
         }
 
-        protected override void AttachProperties(PluginManager pluginManager)
+        protected override void Init(PluginManager pluginManager)
         {
             Plugin.AttachProperty("TyreData.TyreCompound", TyreCompound);
 
@@ -204,24 +204,39 @@ namespace AidanKay.ExtraDataPlugin.Sections
             if (AllGameData.GameData.GameName == "AssettoCorsaCompetizione")
             {
                 // 2022-01-24: These are currently empty?
-                float[] innerTemps = AllGameData.AccRawGameData.Physics.TyreTempI;
-                float[] middleTemps = AllGameData.AccRawGameData.Physics.TyreTempM;
-                float[] outerTemps = AllGameData.AccRawGameData.Physics.TyreTempO;
+                //float[] innerTemps = AllGameData.AccRawGameData.Physics.TyreTempI;
+                //float[] middleTemps = AllGameData.AccRawGameData.Physics.TyreTempM;
+                //float[] outerTemps = AllGameData.AccRawGameData.Physics.TyreTempO;
 
-                TyreTemperatureFrontLeftInner.Value = innerTemps[0];
-                TyreTemperatureFrontRightInner.Value = innerTemps[1];
-                TyreTemperatureRearLeftInner.Value = innerTemps[2];
-                TyreTemperatureRearRightInner.Value = innerTemps[3];
+                //TyreTemperatureFrontLeftInner.Value = innerTemps[0];
+                //TyreTemperatureFrontRightInner.Value = innerTemps[1];
+                //TyreTemperatureRearLeftInner.Value = innerTemps[2];
+                //TyreTemperatureRearRightInner.Value = innerTemps[3];
 
-                TyreTemperatureFrontLeftMiddle.Value = middleTemps[0];
-                TyreTemperatureFrontRightMiddle.Value = middleTemps[1];
-                TyreTemperatureRearLeftMiddle.Value = middleTemps[2];
-                TyreTemperatureRearRightMiddle.Value = middleTemps[3];
+                //TyreTemperatureFrontLeftMiddle.Value = middleTemps[0];
+                //TyreTemperatureFrontRightMiddle.Value = middleTemps[1];
+                //TyreTemperatureRearLeftMiddle.Value = middleTemps[2];
+                //TyreTemperatureRearRightMiddle.Value = middleTemps[3];
 
-                TyreTemperatureFrontLeftOuter.Value = outerTemps[0];
-                TyreTemperatureFrontRightOuter.Value = outerTemps[1];
-                TyreTemperatureRearLeftOuter.Value = outerTemps[2];
-                TyreTemperatureRearRightOuter.Value = outerTemps[3];
+                //TyreTemperatureFrontLeftOuter.Value = outerTemps[0];
+                //TyreTemperatureFrontRightOuter.Value = outerTemps[1];
+                //TyreTemperatureRearLeftOuter.Value = outerTemps[2];
+                //TyreTemperatureRearRightOuter.Value = outerTemps[3];
+
+                TyreTemperatureFrontLeftInner.Value = NewData.TyreTemperatureFrontLeft;
+                TyreTemperatureFrontRightInner.Value = NewData.TyreTemperatureFrontRight;
+                TyreTemperatureRearLeftInner.Value = NewData.TyreTemperatureRearLeft;
+                TyreTemperatureRearRightInner.Value = NewData.TyreTemperatureRearRight;
+
+                TyreTemperatureFrontLeftMiddle.Value = NewData.TyreTemperatureFrontLeft;
+                TyreTemperatureFrontRightMiddle.Value = NewData.TyreTemperatureFrontRight;
+                TyreTemperatureRearLeftMiddle.Value = NewData.TyreTemperatureRearLeft;
+                TyreTemperatureRearRightMiddle.Value = NewData.TyreTemperatureRearRight;
+
+                TyreTemperatureFrontLeftOuter.Value = NewData.TyreTemperatureFrontLeft;
+                TyreTemperatureFrontRightOuter.Value = NewData.TyreTemperatureFrontRight;
+                TyreTemperatureRearLeftOuter.Value = NewData.TyreTemperatureRearLeft;
+                TyreTemperatureRearRightOuter.Value = NewData.TyreTemperatureRearRight;
             }
             else
             {
@@ -248,6 +263,21 @@ namespace AidanKay.ExtraDataPlugin.Sections
             TyreTemperatureFrontRightColour.Value = GetTyreTemperatureColour(TyreTemperatureFrontRight.Value, Settings.TyreTemperatureGradient).ToHex();
             TyreTemperatureRearLeftColour.Value = GetTyreTemperatureColour(TyreTemperatureRearLeft.Value, Settings.TyreTemperatureGradient).ToHex();
             TyreTemperatureRearRightColour.Value = GetTyreTemperatureColour(TyreTemperatureRearRight.Value, Settings.TyreTemperatureGradient).ToHex();
+
+            TyreTemperatureFrontLeftInnerColour.Value = GetTyreTemperatureColour(TyreTemperatureFrontLeftInner.Value, Settings.TyreTemperatureGradient).ToHex();
+            TyreTemperatureFrontRightInnerColour.Value = GetTyreTemperatureColour(TyreTemperatureFrontRightInner.Value, Settings.TyreTemperatureGradient).ToHex();
+            TyreTemperatureRearLeftInnerColour.Value = GetTyreTemperatureColour(TyreTemperatureRearLeftInner.Value, Settings.TyreTemperatureGradient).ToHex();
+            TyreTemperatureRearRightInnerColour.Value = GetTyreTemperatureColour(TyreTemperatureRearRightInner.Value, Settings.TyreTemperatureGradient).ToHex();
+
+            TyreTemperatureFrontLeftMiddleColour.Value = GetTyreTemperatureColour(TyreTemperatureFrontLeftMiddle.Value, Settings.TyreTemperatureGradient).ToHex();
+            TyreTemperatureFrontRightMiddleColour.Value = GetTyreTemperatureColour(TyreTemperatureFrontRightMiddle.Value, Settings.TyreTemperatureGradient).ToHex();
+            TyreTemperatureRearLeftMiddleColour.Value = GetTyreTemperatureColour(TyreTemperatureRearLeftMiddle.Value, Settings.TyreTemperatureGradient).ToHex();
+            TyreTemperatureRearRightMiddleColour.Value = GetTyreTemperatureColour(TyreTemperatureRearRightMiddle.Value, Settings.TyreTemperatureGradient).ToHex();
+
+            TyreTemperatureFrontLeftOuterColour.Value = GetTyreTemperatureColour(TyreTemperatureFrontLeftOuter.Value, Settings.TyreTemperatureGradient).ToHex();
+            TyreTemperatureFrontRightOuterColour.Value = GetTyreTemperatureColour(TyreTemperatureFrontRightOuter.Value, Settings.TyreTemperatureGradient).ToHex();
+            TyreTemperatureRearLeftOuterColour.Value = GetTyreTemperatureColour(TyreTemperatureRearLeftOuter.Value, Settings.TyreTemperatureGradient).ToHex();
+            TyreTemperatureRearRightOuterColour.Value = GetTyreTemperatureColour(TyreTemperatureRearRightOuter.Value, Settings.TyreTemperatureGradient).ToHex();
         }
 
         private Color GetTyreTemperatureColour(double? value, ColourGradient gradient)

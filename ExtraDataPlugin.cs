@@ -91,6 +91,8 @@ namespace AidanKay.ExtraDataPlugin
 
         public void AttachProperty<T>(string propName, AttachedProperty<T> prop) => PluginManager.AttachProperty<T>(propName, typeof(ExtraDataPlugin), prop);
 
+        public void AttachDelegate<T>(string propName, Func<T> valueProvider) => PluginManager.AttachDelegate<T>(propName, typeof(ExtraDataPlugin), valueProvider);
+
         public object GetPropertyValue(string propName) => PluginManager.GetPropertyValue(propName);
     }
 }

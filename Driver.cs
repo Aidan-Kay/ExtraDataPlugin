@@ -5,33 +5,50 @@ namespace AidanKay.ExtraDataPlugin
 {
     internal class Driver
     {
-        public AttachedProperty<int> Position = new AttachedProperty<int>();
-        public AttachedProperty<int> PositionInClass = new AttachedProperty<int>();
+        public string Name;
 
-        public AttachedProperty<string> CarName = new AttachedProperty<string>();
+        public bool IsConnected;
+        public bool IsPlayer;
 
-        public AttachedProperty<string> CarClass = new AttachedProperty<string>();
-        public AttachedProperty<string> CarClassColour = new AttachedProperty<string>();
-        public AttachedProperty<string> CarClassTextColour = new AttachedProperty<string>();
+        public int Position;
+        public int PositionInClass;
 
-        public AttachedProperty<double?> IntervalGap = new AttachedProperty<double?>();
+        public string CarName;
+        public string CarNumber;
 
-        public AttachedProperty<double> LapsCompleted = new AttachedProperty<double>();
+        public string CarClass;
+        public string CarClassColour;
+        public string CarClassTextColour;
 
-        public AttachedProperty<bool> InPitLane = new AttachedProperty<bool>();
-        public AttachedProperty<bool> InPitBox = new AttachedProperty<bool>();
+        public double? IRacingIRating;
+        public string IRacingLicenseText;
+        public string IRacingLicenseTextColour;
+        public string IRacingLicenseColour;
 
-        public AttachedProperty<TimeSpan?> LastLapTime = new AttachedProperty<TimeSpan?>();
-        public AttachedProperty<TimeSpan?> Sector1LastLapTime = new AttachedProperty<TimeSpan?>();
-        public AttachedProperty<TimeSpan?> Sector2LastLapTime = new AttachedProperty<TimeSpan?>();
-        public AttachedProperty<TimeSpan?> Sector3LastLapTime = new AttachedProperty<TimeSpan?>();
+        public double? LapsCompleted;
 
-        public AttachedProperty<TimeSpan?> Sector1BestTime = new AttachedProperty<TimeSpan?>();
-        public AttachedProperty<TimeSpan?> Sector2BestTime = new AttachedProperty<TimeSpan?>();
-        public AttachedProperty<TimeSpan?> Sector3BestTime = new AttachedProperty<TimeSpan?>();
+        public double? GapToLeader;
+        public double? IntervalGap;
 
-        public AttachedProperty<string> Sector1LastLapColour = new AttachedProperty<string>();
-        public AttachedProperty<string> Sector2LastLapColour = new AttachedProperty<string>();
-        public AttachedProperty<string> Sector3LastLapColour = new AttachedProperty<string>();
+        public TimeSpan? LastLapTime;
+        public string LastLapColour;
+
+        public TimeSpan? BestLapTime;
+        public string BestLapColour;
+
+        public TimeSpan? Sector1LastLapTime;
+        public TimeSpan? Sector2LastLapTime;
+        public TimeSpan? Sector3LastLapTime;
+
+        public TimeSpan? Sector1BestTime;
+        public TimeSpan? Sector2BestTime;
+        public TimeSpan? Sector3BestTime;
+
+        public string Sector1LastLapColour;
+        public string Sector2LastLapColour;
+        public string Sector3LastLapColour;
+
+        public bool InPitLane;
+        public bool InPitBox;
     }
 }

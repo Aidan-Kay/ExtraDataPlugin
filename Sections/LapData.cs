@@ -29,13 +29,22 @@ namespace AidanKay.ExtraDataPlugin.Sections
         public AttachedProperty<double?> LastLapDeltaToSessionBest = new AttachedProperty<double?>();
         public AttachedProperty<double?> LastLapDeltaToAllTimeBest = new AttachedProperty<double?>();
 
+        public AttachedProperty<double?> PredictedLapDeltaToSessionBest = new AttachedProperty<double?>();
+
         public LapData(ExtraDataPlugin extraDataPlugin) : base(extraDataPlugin) { }
 
         public override void DataUpdate()
         {
+            // Order is intentional (dependancies)
+
             SetSessionBestLapTimes();
+            SessionBestLapColour.Value = GetSessionBestLapColour();
+
             SetAllTimeBestLapTimes();
+            AllTimeBestLapColour.Value = GetAllTimeBestLapColour();
+
             SetOverallBestLapTimes();
+            OverallBestLapColour.Value = GetOverallBestLapColour();
 
             CurrentLapTime.Value = GetCurrentLapTime();
             CurrentLapColour.Value = GetCurrentLapColour();
@@ -43,15 +52,13 @@ namespace AidanKay.ExtraDataPlugin.Sections
             LastLapTime.Value = GetLastLapTime();
             LastLapColour.Value = GetLastLapColour();
 
-            SessionBestLapColour.Value = GetSessionBestLapColour();
-            AllTimeBestLapColour.Value = GetAllTimeBestLapColour();
-            OverallBestLapColour.Value = GetOverallBestLapColour();
-
             LastLapDeltaToSessionBest.Value = GetLastLapDeltaToSessionBest();
             LastLapDeltaToAllTimeBest.Value = GetLastLapDeltaToAllTimeBest();
+
+            PredictedLapDeltaToSessionBest.Value = GetPredictedLapDeltaToSessionBest();
         }
 
-        protected override void AttachProperties(PluginManager pluginManager)
+        protected override void Init(PluginManager pluginManager)
         {
             Plugin.AttachProperty("LapData.CurrentLapTime", CurrentLapTime);
             Plugin.AttachProperty("LapData.CurrentLapColour", CurrentLapColour);
@@ -75,6 +82,8 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
             Plugin.AttachProperty("LapData.LastLapDeltaToSessionBest", LastLapDeltaToSessionBest);
             Plugin.AttachProperty("LapData.LastLapDeltaToAllTimeBest", LastLapDeltaToAllTimeBest);
+
+            Plugin.AttachProperty("LapData.PredictedLapDeltaToSessionBest", PredictedLapDeltaToSessionBest);
         }
 
         private TimeSpan? GetCurrentLapTime()
@@ -156,9 +165,13 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
         private void SetOverallBestLapTimes()
         {
-            if (NewData.BestLapOpponent == null) return;
+            if (NewData.BestLapOpponent == null)
+                return;
 
             OverallBestLapTime.Value = CommonHelper.NullIf(NewData.BestLapOpponent.BestLapTime, TimeSpan.Zero);
+
+            if (OldData.BestLapOpponent == null)
+                return;
 
             if (CommonHelper.IsDifferent(NewData.BestLapOpponent.BestLapTime, OldData.BestLapOpponent.BestLapTime))
                 PreviousOverallBestLapTime.Value = CommonHelper.NullIf(OldData.BestLapOpponent.BestLapTime, TimeSpan.Zero);
@@ -170,11 +183,13 @@ namespace AidanKay.ExtraDataPlugin.Sections
             double? bestTime = CommonHelper.TimeSpanToSeconds(SessionBestLapTime.Value);
             double? oldBestTime = CommonHelper.TimeSpanToSeconds(PreviousSessionBestLapTime.Value);
 
-            if (lastTime == null || bestTime == null) return null;
+            if (lastTime == null || bestTime == null)
+                return null;
 
             if (lastTime == bestTime)
             {
-                if (oldBestTime == null) return null;
+                if (oldBestTime == null)
+                    return null;
                 return lastTime - oldBestTime;
             }
             else
@@ -187,15 +202,28 @@ namespace AidanKay.ExtraDataPlugin.Sections
             double? bestTime = CommonHelper.TimeSpanToSeconds(AllTimeBestLapTime.Value);
             double? oldBestTime = CommonHelper.TimeSpanToSeconds(PreviousAllTimeBestLapTime.Value);
 
-            if (lastTime == null || bestTime == null) return null;
+            if (lastTime == null || bestTime == null)
+                return null;
 
             if (lastTime == bestTime)
             {
-                if (oldBestTime == null) return null;
+                if (oldBestTime == null)
+                    return null;
                 return lastTime - oldBestTime;
             }
             else
                 return lastTime - bestTime;
+        }
+
+        private double? GetPredictedLapDeltaToSessionBest()
+        {
+            double? estimatedTime = CommonHelper.TimeSpanToSeconds((TimeSpan)Plugin.GetPropertyValue("PersistantTrackerPlugin.EstimatedLapTime"));
+            double? bestTime = CommonHelper.TimeSpanToSeconds(SessionBestLapTime.Value);
+
+            if (estimatedTime == null || bestTime == null)
+                return null;
+
+            return estimatedTime - bestTime;
         }
     }
 }

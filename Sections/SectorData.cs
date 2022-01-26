@@ -44,7 +44,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
             SetLastSectorColours();
         }
 
-        protected override void AttachProperties(PluginManager pluginManager)
+        protected override void Init(PluginManager pluginManager)
         {
             Plugin.AttachProperty("SectorData.SectorLastTime", SectorLastTime);
             Plugin.AttachProperty("SectorData.SectorLastDeltaToSessionBest", SectorLastDeltaToSessionBest);

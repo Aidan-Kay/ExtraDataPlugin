@@ -1,20 +1,27 @@
 ﻿using ACSharedMemory.ACC.Reader;
+using ksBroadcastingNetwork.Structs;
 using System.Linq;
 
 namespace AidanKay.ExtraDataPlugin
 {
     internal static class AccHelper
     {
-        public static ksBroadcastingNetwork.Structs.RealtimeCarUpdate GetPlayersCar(ACCRawData accRawData)
+        public static RealtimeCarUpdate GetPlayersCar(ACCRawData accRawData)
         {
             int carId = accRawData.Graphics.PlayerCarID;
             return accRawData.Cars[carId];
         }
 
-        public static ksBroadcastingNetwork.Structs.RealtimeCarUpdate GetCarByPosition(ACCRawData accRawData, int position)
+        public static RealtimeCarUpdate GetCarByPosition(ACCRawData accRawData, int position)
         {
-            var car = accRawData.Cars.Where(c => c.Value.RacePosition == position);
-            return car.Count() > 0 ? car.First().Value : null;
+            var car = accRawData.Cars.Values.Where(c => c.RacePosition == position);
+            return car.Count() > 0 ? car.First() : null;
+        }
+
+        public static RealtimeCarUpdate GetCarByNumber(ACCRawData accRawData, string carNumber)
+        {
+            var car = accRawData.Cars.Values.Where(c => c.CarEntry.RaceNumber.ToString() == carNumber);
+            return car.Count() > 0 ? car.First() : null;
         }
 
         public static string GetCarName(byte carModelType)
