@@ -8,9 +8,6 @@ Main additions include extra leaderboard data and colour gradients with any numb
 - Fuel to add estimation
 
 Leaderboard data:
-- Qualifying/practice mode
-- iRacing car classes & colours
-- iRacing license text
 - iRacing incident count
 - Pit count
 - Last pit lap
