@@ -33,9 +33,9 @@ namespace AidanKay.ExtraDataPlugin.Sections
         public override void DataUpdate()
         {
             if (AllGameData.GameData.GameName == "IRacing")
-                IRacingDrivers = AllGameData.IRacingRawGameData.SessionData.DriverInfo.CompetingDrivers;
+                IRacingDrivers = AllGameData.IRacingRawData.SessionData.DriverInfo.CompetingDrivers;
             else if (AllGameData.GameData.GameName == "AssettoCorsaCompetizione")
-                AccCars = AllGameData.AccRawGameData.Cars;
+                AccCars = AllGameData.AccRawData.Cars;
 
             Opponents = NewData.Opponents;
             OpponentCountChanged = NewData.Opponents.Count != OldData.Opponents.Count;
@@ -50,6 +50,8 @@ namespace AidanKay.ExtraDataPlugin.Sections
                 ResetProperties();
 
             UpdateDrivers();
+
+            OpponentOrderChanged = false;
         }
 
         private bool HasOpponentOrderChanged()
@@ -63,8 +65,10 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
         private void UpdateDrivers()
         {
+            bool updateAll = OpponentCountChanged || OpponentOrderChanged || SessionChanged || !StaticDriverDataLoaded;
+
             // Mostly static data - no need to keep updating frequently
-            if (OpponentCountChanged || OpponentOrderChanged || SessionChanged || !StaticDriverDataLoaded)
+            if (updateAll)
             {
                 for (int i = 0; i < Opponents.Count; i++)
                 {
@@ -78,7 +82,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
                     if (AllGameData.GameData.GameName == "IRacing")
                     {
-                        iRacingSDK.SessionData._DriverInfo._Drivers driver = IRacingHelper.GetDriverByNumber(AllGameData.IRacingRawGameData, opponent.CarNumber);
+                        iRacingSDK.SessionData._DriverInfo._Drivers driver = IRacingHelper.GetDriverByNumber(AllGameData.IRacingRawData, opponent.CarNumber);
 
                         if (driver != null)
                         {
@@ -92,7 +96,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
                     }
                     else if (AllGameData.GameData.GameName == "AssettoCorsaCompetizione")
                     {
-                        RealtimeCarUpdate car = AccHelper.GetCarByNumber(AllGameData.AccRawGameData, opponent.CarNumber);
+                        RealtimeCarUpdate car = AccHelper.GetCarByNumber(AllGameData.AccRawData, opponent.CarNumber);
 
                         if (car != null)
                         {
@@ -107,7 +111,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
                 StaticDriverDataLoaded = true;
             }
 
-            if (Plugin.UpdateAt1Fps)
+            if (Plugin.UpdateAt1Fps || updateAll)
             {
                 for (int i = 0; i < Opponents.Count; i++)
                 {
@@ -152,8 +156,6 @@ namespace AidanKay.ExtraDataPlugin.Sections
                         .ThenBy(x => x.Position)
                         .ElementAt(i);
             }
-
-            OpponentOrderChanged = false;
         }
 
         protected override void Init(PluginManager pluginManager)
@@ -263,21 +265,25 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
         public string GetLastLapColour(Driver driver)
         {
-            if (driver.LastLapTime == null || NewData.BestLapOpponent == null)
+            if (driver.LastLapTime == null)
                 return "DimGray";
 
-            TimeSpan? overallBestLapTime = CommonHelper.NullIf(NewData.BestLapOpponent.BestLapTime, TimeSpan.Zero);
+            if (NewData.BestLapOpponent == null)
+                return "White";
 
+            TimeSpan? overallBestLapTime = CommonHelper.NullIf(NewData.BestLapOpponent.BestLapTime, TimeSpan.Zero);
             return driver.LastLapTime == overallBestLapTime ? "Magenta" : "White";
         }
 
         public string GetBestLapColour(Driver driver)
         {
-            if (driver.BestLapTime == null || NewData.BestLapOpponent == null)
+            if (driver.BestLapTime == null)
                 return "DimGray";
 
-            TimeSpan? overallBestLapTime = CommonHelper.NullIf(NewData.BestLapOpponent.BestLapTime, TimeSpan.Zero);
+            if (NewData.BestLapOpponent == null)
+                return "White";
 
+            TimeSpan? overallBestLapTime = CommonHelper.NullIf(NewData.BestLapOpponent.BestLapTime, TimeSpan.Zero);
             return driver.BestLapTime == overallBestLapTime ? "Magenta" : "White";
         }
 

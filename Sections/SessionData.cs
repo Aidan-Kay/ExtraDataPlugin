@@ -40,15 +40,20 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
         public double? GetEstimatedLapsRemaining()
         {
+            if (!NewData.SessionTypeName.ToLower().Contains("race"))
+                return null;
+
             double sessionTimeLeft = CommonHelper.TimeSpanToSeconds(NewData.SessionTimeLeft);
 
             if (sessionTimeLeft == 0)
                 return null;
 
             double? referenceLapTime;
-
             double? averageLapTime = GetLastNLapsAverageTime(5);
-            referenceLapTime = averageLapTime ?? CommonHelper.TimeSpanToSeconds(NewData.AllTimeBest);
+            double? sessionBestLapTime = CommonHelper.NullIf(CommonHelper.TimeSpanToSeconds(NewData.BestLapTime), 0);
+            double? allTimeBestLapTime = CommonHelper.NullIf(CommonHelper.TimeSpanToSeconds(NewData.AllTimeBest), 0);
+
+            referenceLapTime = averageLapTime ?? sessionBestLapTime ?? allTimeBestLapTime;
 
             if (referenceLapTime == null)
                 return null;

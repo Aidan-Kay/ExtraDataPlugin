@@ -8,8 +8,10 @@ namespace AidanKay.ExtraDataPlugin
     internal class AllGameData
     {
         public GameData GameData { get; set; }
-        public ACCRawData AccRawGameData { get; set; }
-        public IRacingReader.DataSampleEx IRacingRawGameData { get; set; }
+        public ACCRawData AccRawData { get; set; }
+        public ACCRawData AccOldRawData { get; set; }
+        public IRacingReader.DataSampleEx IRacingRawData { get; set; }
+        public IRacingReader.DataSampleEx IRacingOldRawData { get; set; }
 
         public void AssignSpecificGameData()
         {
@@ -19,11 +21,13 @@ namespace AidanKay.ExtraDataPlugin
             if (GameData.GameName == "AssettoCorsaCompetizione")
             {
                 GameData<ACCRawData> accData = GameData as GameData<ACCRawData>;
-                AccRawGameData = accData.GameNewData.Raw;
+                AccRawData = accData.GameNewData.Raw;
+                AccOldRawData = accData.GameOldData.Raw;
             }
 
             if (GameData.GameName == "IRacing")
-                IRacingRawGameData = GameData.NewData.GetRawDataObject() as DataSampleEx;
+                IRacingRawData = GameData.NewData.GetRawDataObject() as DataSampleEx;
+                IRacingOldRawData = GameData.OldData.GetRawDataObject() as DataSampleEx;
         }
     }
 }

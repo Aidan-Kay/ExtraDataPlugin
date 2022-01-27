@@ -40,7 +40,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
         private double GetFuelPerLap()
         {
             if (AllGameData.GameData.GameName == "AssettoCorsaCompetizione")
-                return AllGameData.AccRawGameData.Graphics.FuelXLap;
+                return AllGameData.AccRawData.Graphics.FuelXLap;
 
             return (double)Plugin.GetPropertyValue("DataCorePlugin.Computed.Fuel_LitersPerLap");
         }
@@ -48,7 +48,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
         private double GetFuelLapsRemaining()
         {
             if (AllGameData.GameData.GameName == "AssettoCorsaCompetizione")
-                return AllGameData.AccRawGameData.Graphics.fuelEstimatedLaps;
+                return AllGameData.AccRawData.Graphics.fuelEstimatedLaps;
 
             return (double)Plugin.GetPropertyValue("DataCorePlugin.Computed.Fuel_RemainingLaps");
         }

@@ -137,9 +137,9 @@ namespace AidanKay.ExtraDataPlugin.Sections
         {
             if (AllGameData.GameData.GameName == "AssettoCorsaCompetizione")
             {
-                if (AllGameData.AccRawGameData.Graphics.TyreCompound == "dry_compound")
+                if (AllGameData.AccRawData.Graphics.TyreCompound == "dry_compound")
                     return "Dry";
-                else if (AllGameData.AccRawGameData.Graphics.TyreCompound == "wet_compound")
+                else if (AllGameData.AccRawData.Graphics.TyreCompound == "wet_compound")
                     return "Wet";
             }
 
@@ -160,7 +160,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
         {
             if (AllGameData.GameData.GameName == "AssettoCorsaCompetizione")
             {
-                string carClass = AccHelper.GetCarClass(AccHelper.GetPlayersCar(AllGameData.AccRawGameData).CarEntry.CarModelType);
+                string carClass = AccHelper.GetCarClass(AccHelper.GetPlayersCar(AllGameData.AccRawData).CarEntry.CarModelType);
                 if (carClass.Contains("GT3"))
                     return TyreCompound.Value == "Dry" ? Settings.AccGt3DryTyrePressureGradient : Settings.AccGt3WetTyrePressureGradient;
                 else if (carClass.Contains("GT4"))

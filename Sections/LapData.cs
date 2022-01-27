@@ -6,6 +6,8 @@ namespace AidanKay.ExtraDataPlugin.Sections
 {
     internal class LapData : SectionBase
     {
+        public AttachedProperty<bool> CurrentLapIsValid = new AttachedProperty<bool>();
+
         public AttachedProperty<TimeSpan?> CurrentLapTime = new AttachedProperty<TimeSpan?>();
         public AttachedProperty<string> CurrentLapColour = new AttachedProperty<string>();
 
@@ -46,6 +48,8 @@ namespace AidanKay.ExtraDataPlugin.Sections
             SetOverallBestLapTimes();
             OverallBestLapColour.Value = GetOverallBestLapColour();
 
+            CurrentLapIsValid.Value = IsCurrentLapValid();
+
             CurrentLapTime.Value = GetCurrentLapTime();
             CurrentLapColour.Value = GetCurrentLapColour();
 
@@ -60,6 +64,8 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
         protected override void Init(PluginManager pluginManager)
         {
+            Plugin.AttachProperty("LapData.CurrentLapIsValid", CurrentLapIsValid);
+
             Plugin.AttachProperty("LapData.CurrentLapTime", CurrentLapTime);
             Plugin.AttachProperty("LapData.CurrentLapColour", CurrentLapColour);
 
@@ -86,6 +92,32 @@ namespace AidanKay.ExtraDataPlugin.Sections
             Plugin.AttachProperty("LapData.PredictedLapDeltaToSessionBest", PredictedLapDeltaToSessionBest);
         }
 
+        private bool IsCurrentLapValid()
+        {
+            if (AllGameData.GameData.GameName == "AssettoCorsaCompetizione")
+                return (int)Plugin.GetPropertyValue("GameRawData.Graphics.isValidLap") == 1;
+
+            else if (AllGameData.GameData.GameName == "IRacing")
+            {
+                if (NewData.CurrentLapTime == TimeSpan.Zero || NewData.LastLapTime != OldData.LastLapTime)
+                    return true;
+
+                if (!CurrentLapIsValid.Value)
+                    return false;
+
+                AllGameData.IRacingRawData.Telemetry.TryGetValue("PlayerCarTeamIncidentCount", out object incCountObj);
+                AllGameData.IRacingOldRawData.Telemetry.TryGetValue("PlayerCarTeamIncidentCount", out object oldIncCountObj);
+
+                int incCount = Convert.ToInt32(incCountObj);
+                int oldIncCount = Convert.ToInt32(oldIncCountObj);
+
+                if (AllGameData.IRacingRawData.Telemetry.SessionFlags.ToString().Contains("furled") || incCount != oldIncCount)
+                    return false;
+            }
+
+            return true;
+        }
+
         private TimeSpan? GetCurrentLapTime()
         {
             return CommonHelper.NullIf(NewData.CurrentLapTime, TimeSpan.Zero);
@@ -96,13 +128,10 @@ namespace AidanKay.ExtraDataPlugin.Sections
             if (CurrentLapTime.Value == null)
                 return "DimGray";
 
-            if (AllGameData.GameData.GameName == "AssettoCorsaCompetizione")
-            {
-                bool isValidLap = (int)Plugin.GetPropertyValue("GameRawData.Graphics.isValidLap") == 1;
-                return isValidLap ? "White" : "Red";
-            }
-            else
-                return "White";
+            if (!CurrentLapIsValid.Value)
+                return "Red";
+
+            return "White";
         }
 
         private TimeSpan? GetLastLapTime()
