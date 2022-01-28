@@ -76,6 +76,8 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
                     Drivers[i].Name = opponent.Name;
                     Drivers[i].IsPlayer = opponent.IsPlayer;
+                    Drivers[i].Position = opponent.Position;
+                    Drivers[i].PositionInClass = opponent.PositionInClass;
                     Drivers[i].CarName = opponent.CarName;
                     Drivers[i].CarNumber = opponent.CarNumber;
                     Drivers[i].CarClass = NewData.CarClass;
@@ -116,11 +118,12 @@ namespace AidanKay.ExtraDataPlugin.Sections
                 for (int i = 0; i < Opponents.Count; i++)
                 {
                     Opponent opponent = Opponents[i];
-                    Opponent oldOpponent = OldData.Opponents.Where(o => o.CarNumber == opponent.CarNumber).FirstOrDefault();
+                    Opponent oldOpponent = OldData.Opponents.Where(o => o.CarNumber == opponent.CarNumber).FirstOrDefault(); // DELETE
 
                     Drivers[i].IsConnected = opponent.IsConnected;
                     Drivers[i].LapsCompleted = GetLapsCompleted(opponent);
                     Drivers[i].GapToLeader = IsRace ? opponent.GaptoLeader : null;
+                    Drivers[i].IntervalGap = GetIntervalGap(Drivers[i]);
 
                     Drivers[i].LastLapTime = CommonHelper.NullIf(opponent.LastLapTime, TimeSpan.Zero);
                     Drivers[i].LastLapColour = GetLastLapColour(Drivers[i]);
@@ -143,12 +146,6 @@ namespace AidanKay.ExtraDataPlugin.Sections
                     Drivers[i].InPitLane = opponent.IsCarInPitLane;
                     Drivers[i].InPitBox = opponent.IsCarInPit;
                 }
-
-                SetPositions();
-                //SetPositionInClass(Drivers);
-
-                for (int i = 0; i < Opponents.Count; i++)
-                    Drivers[i].IntervalGap = GetIntervalGap(Drivers[i]);
 
                 for (int i = 0; i <= Opponents.Count; i++)
                     DriversByPosition[i + 1] = Drivers
@@ -263,6 +260,33 @@ namespace AidanKay.ExtraDataPlugin.Sections
             return driver.Any() ? driver.First() : null;
         }
 
+        public double? GetLapsCompleted(Opponent opponent)
+        {
+            if (!IsRace)
+                return null;
+
+            // ACC current lap starts at 0
+            int? currentLap;
+            currentLap = AllGameData.GameData.GameName == "AssettoCorsaCompetizione" ? opponent.CurrentLap : opponent.CurrentLap - 1;
+
+            if (currentLap == null)
+                return null;
+
+            return currentLap + opponent.TrackPositionPercent ?? 0;
+        }
+
+        public double? GetIntervalGap(Driver driver)
+        {
+            if (!IsRace)
+                return null;
+
+            if (driver.Position == 1)
+                return null;
+
+            var carAhead = GetDriverByPosition(driver.Position - 1);
+            return carAhead != null ? driver.GapToLeader - carAhead.GapToLeader : null;
+        }
+
         public string GetLastLapColour(Driver driver)
         {
             if (driver.LastLapTime == null)
@@ -285,29 +309,6 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
             TimeSpan? overallBestLapTime = CommonHelper.NullIf(NewData.BestLapOpponent.BestLapTime, TimeSpan.Zero);
             return driver.BestLapTime == overallBestLapTime ? "Magenta" : "White";
-        }
-
-        public double? GetLapsCompleted(Opponent opponent)
-        {
-            if (!IsRace)
-                return null;
-
-            if (NewData.CurrentLap > 0 && NewData.CurrentLapTime > TimeSpan.Zero)
-                return opponent.CurrentLap - 1 + opponent.TrackPositionPercent ?? 0;
-
-            return null;
-        }
-
-        public double? GetIntervalGap(Driver driver)
-        {
-            if (!IsRace)
-                return null;
-
-            if (driver.Position == 1)
-                return null;
-
-            var carAhead = GetDriverByPosition(driver.Position - 1);
-            return carAhead != null ? driver.GapToLeader - carAhead.GapToLeader : null;
         }
 
         public string GetLastLapSectorColour(TimeSpan? lastSector, TimeSpan? bestSector, TimeSpan? bestOverallSector)
