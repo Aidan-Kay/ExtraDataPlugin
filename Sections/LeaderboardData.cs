@@ -121,7 +121,12 @@ namespace AidanKay.ExtraDataPlugin.Sections
                     Opponent oldOpponent = OldData.Opponents.Where(o => o.CarNumber == opponent.CarNumber).FirstOrDefault(); // DELETE
 
                     Drivers[i].IsConnected = opponent.IsConnected;
-                    Drivers[i].LapsCompleted = GetLapsCompleted(opponent);
+
+                    // ACC current lap starts at 0
+                    Drivers[i].CurrentLap = AllGameData.GameData.GameName == "AssettoCorsaCompetizione" ? opponent.CurrentLap : opponent.CurrentLap - 1;
+                    Drivers[i].CurrentLapDistance = opponent.TrackPositionPercent;
+                    Drivers[i].LapsCompleted = GetLapsCompleted(opponent, Drivers[i].CurrentLap);
+
                     Drivers[i].GapToLeader = IsRace ? opponent.GaptoLeader : null;
                     Drivers[i].IntervalGap = GetIntervalGap(Drivers[i]);
 
@@ -198,6 +203,8 @@ namespace AidanKay.ExtraDataPlugin.Sections
                 Plugin.AttachDelegate($"{propPrefix}CarClassColour", () => DriversByPosition[pos].CarClassColour);
                 Plugin.AttachDelegate($"{propPrefix}CarClassTextColour", () => DriversByPosition[pos].CarClassTextColour);
 
+                Plugin.AttachDelegate($"{propPrefix}CurrentLap", () => DriversByPosition[pos].CurrentLap);
+                Plugin.AttachDelegate($"{propPrefix}CurrentLapDistance", () => DriversByPosition[pos].CurrentLapDistance);
                 Plugin.AttachDelegate($"{propPrefix}LapsCompleted", () => DriversByPosition[pos].LapsCompleted);
 
                 Plugin.AttachDelegate($"{propPrefix}GapToLeader", () => DriversByPosition[pos].GapToLeader);
@@ -260,16 +267,9 @@ namespace AidanKay.ExtraDataPlugin.Sections
             return driver.Any() ? driver.First() : null;
         }
 
-        public double? GetLapsCompleted(Opponent opponent)
+        public double? GetLapsCompleted(Opponent opponent, int? currentLap)
         {
-            if (!IsRace)
-                return null;
-
-            // ACC current lap starts at 0
-            int? currentLap;
-            currentLap = AllGameData.GameData.GameName == "AssettoCorsaCompetizione" ? opponent.CurrentLap : opponent.CurrentLap - 1;
-
-            if (currentLap == null)
+            if (!IsRace || currentLap == null)
                 return null;
 
             return currentLap + opponent.TrackPositionPercent ?? 0;

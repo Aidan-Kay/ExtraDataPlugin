@@ -25,6 +25,8 @@ namespace AidanKay.ExtraDataPlugin
         public string IRacingLicenseTextColour;
         public string IRacingLicenseColour;
 
+        public int? CurrentLap;
+        public double? CurrentLapDistance;
         public double? LapsCompleted;
 
         public double? GapToLeader;
