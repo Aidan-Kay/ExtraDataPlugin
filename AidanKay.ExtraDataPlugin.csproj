@@ -100,7 +100,6 @@
     <Compile Include="Sections\LeaderboardData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sections\SectorData.cs" />
-    <Compile Include="SectorFunctions.cs" />
     <Compile Include="SettingsControlDemo.xaml.cs">
       <DependentUpon>SettingsControlDemo.xaml</DependentUpon>
     </Compile>

@@ -32,10 +32,8 @@ namespace AidanKay.ExtraDataPlugin.Sections
             Plugin.AttachProperty("FuelData.FuelLapsRemaining", FuelLapsRemaining);
         }
 
-        private double GetFuelLastLap()
-        {
-            return (double)Plugin.GetPropertyValue("DataCorePlugin.Computed.Fuel_LastLapConsumption");
-        }
+        private double GetFuelLastLap() =>
+            (double)Plugin.GetPropertyValue("DataCorePlugin.Computed.Fuel_LastLapConsumption");
 
         private double GetFuelPerLap()
         {

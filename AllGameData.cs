@@ -25,9 +25,11 @@ namespace AidanKay.ExtraDataPlugin
                 AccOldRawData = accData.GameOldData.Raw;
             }
 
-            if (GameData.GameName == "IRacing")
+            else if (GameData.GameName == "IRacing")
+            {
                 IRacingRawData = GameData.NewData.GetRawDataObject() as DataSampleEx;
                 IRacingOldRawData = GameData.OldData.GetRawDataObject() as DataSampleEx;
+            }
         }
     }
 }

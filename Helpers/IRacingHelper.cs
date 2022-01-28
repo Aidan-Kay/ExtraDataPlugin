@@ -12,10 +12,8 @@ namespace AidanKay.ExtraDataPlugin
             return driver.Count() > 0 ? driver.First() : null;
         }
 
-        public static string GetCarClassColour(string carClassColour)
-        {
-            return carClassColour == "0xffffff" ? "#FF33CEFF" : carClassColour.Replace("0x", "#FF");
-        }
+        public static string GetCarClassColour(string carClassColour) =>
+            carClassColour == "0xffffff" ? "#FF33CEFF" : carClassColour.Replace("0x", "#FF");
 
         public static string GetLicenseColour(string licString)
         {
@@ -30,9 +28,7 @@ namespace AidanKay.ExtraDataPlugin
             return !licString.Contains("R") ? "Black" : "#FFB40800";
         }
 
-        public static string GetLicenseTextColour(string licString)
-        {
-            return licString.Contains("B") || licString.Contains("C") || licString.Contains("D") ? "Black" : "White";
-        }
+        public static string GetLicenseTextColour(string licString) =>
+            licString.Contains("B") || licString.Contains("C") || licString.Contains("D") ? "Black" : "White";
     }
 }

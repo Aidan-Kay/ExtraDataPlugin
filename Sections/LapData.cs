@@ -118,10 +118,8 @@ namespace AidanKay.ExtraDataPlugin.Sections
             return true;
         }
 
-        private TimeSpan? GetCurrentLapTime()
-        {
-            return CommonHelper.NullIf(NewData.CurrentLapTime, TimeSpan.Zero);
-        }
+        private TimeSpan? GetCurrentLapTime() =>
+            CommonHelper.NullIf(NewData.CurrentLapTime, TimeSpan.Zero);
 
         private string GetCurrentLapColour()
         {
@@ -134,10 +132,8 @@ namespace AidanKay.ExtraDataPlugin.Sections
             return "White";
         }
 
-        private TimeSpan? GetLastLapTime()
-        {
-            return CommonHelper.NullIf(NewData.LastLapTime, TimeSpan.Zero);
-        }
+        private TimeSpan? GetLastLapTime() =>
+            CommonHelper.NullIf(NewData.LastLapTime, TimeSpan.Zero);
 
         private string GetLastLapColour()
         {

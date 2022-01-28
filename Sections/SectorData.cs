@@ -72,16 +72,13 @@ namespace AidanKay.ExtraDataPlugin.Sections
             Plugin.AttachProperty("SectorData.Sector3DeltaToSessionBest", Sector3DeltaToSessionBest);
         }
 
-        public int? GetCurrentSector()
-        {
-            return CommonHelper.NullIf(NewData.CurrentSectorIndex, 0);
-        }
+        public int? GetCurrentSector() =>
+            CommonHelper.NullIf(NewData.CurrentSectorIndex, 0);
 
         public int? GetPreviousSector()
         {
             int? currentSector = GetCurrentSector();
             if (currentSector == null) return null;
-
             if (currentSector == 1) return 3;
             if (currentSector == 2) return 1;
             if (currentSector == 3) return 2;
@@ -99,7 +96,9 @@ namespace AidanKay.ExtraDataPlugin.Sections
         public TimeSpan? GetLastSectorTime()
         {
             int? currentSector = GetCurrentSector();
-            if (currentSector == null) return null;
+            if (currentSector == null)
+                return null;
+
             return GetLastSectorTime((int)currentSector);
         }
 
@@ -139,20 +138,32 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
         public void SetOverallBestSectorTimes()
         {
+            TimeSpan?[] bestOverallSectors = GetOverallBestSectorTimes(NewData);
+
+            Sector1OverallBestTime.Value = bestOverallSectors[0];
+            Sector2OverallBestTime.Value = bestOverallSectors[1];
+            Sector3OverallBestTime.Value = bestOverallSectors[2];
+        }
+
+        public static TimeSpan?[] GetOverallBestSectorTimes(StatusDataBase data)
+        {
             List<double?> bestSector1s = new List<double?>();
             List<double?> bestSector2s = new List<double?>();
             List<double?> bestSector3s = new List<double?>();
 
-            foreach (Opponent o in NewData.Opponents)
+            foreach (Opponent o in data.Opponents)
             {
                 bestSector1s.Add(o.BestSector1);
                 bestSector2s.Add(o.BestSector2);
                 bestSector3s.Add(o.BestSector3);
             }
 
-            Sector1OverallBestTime.Value = CommonHelper.ToNullableTimeSpan(bestSector1s.Where(t => t.HasValue).Min());
-            Sector2OverallBestTime.Value = CommonHelper.ToNullableTimeSpan(bestSector2s.Where(t => t.HasValue).Min());
-            Sector3OverallBestTime.Value = CommonHelper.ToNullableTimeSpan(bestSector3s.Where(t => t.HasValue).Min());
+            return new TimeSpan?[]
+            {
+                CommonHelper.ToNullableTimeSpan(bestSector1s.Where(t => t.HasValue).Min()),
+                CommonHelper.ToNullableTimeSpan(bestSector2s.Where(t => t.HasValue).Min()),
+                CommonHelper.ToNullableTimeSpan(bestSector3s.Where(t => t.HasValue).Min())
+            };
         }
 
         public void SetLastSectorDeltaToPersonalBests()
@@ -163,8 +174,8 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
             int? previousSector = GetPreviousSector();
             if (previousSector == 1) SectorLastDeltaToSessionBest.Value = Sector1DeltaToSessionBest.Value;
-            if (previousSector == 2) SectorLastDeltaToSessionBest.Value = Sector2DeltaToSessionBest.Value;
-            if (previousSector == 3) SectorLastDeltaToSessionBest.Value = Sector3DeltaToSessionBest.Value;
+            else if (previousSector == 2) SectorLastDeltaToSessionBest.Value = Sector2DeltaToSessionBest.Value;
+            else if (previousSector == 3) SectorLastDeltaToSessionBest.Value = Sector3DeltaToSessionBest.Value;
         }
 
         public double? GetLastSectorDeltaToPersonalBest(TimeSpan? sectorLastTime, TimeSpan? sectorBestTime, TimeSpan? oldSectorBestTime)
@@ -177,7 +188,9 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
             if (lastTime == bestTime)
             {
-                if (oldBestTime == null) return null;
+                if (oldBestTime == null)
+                    return null;
+
                 return lastTime - oldBestTime;
             }
             else
@@ -193,15 +206,21 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
         private string GetLastSectorColour(int sectorIndex, TimeSpan? sectorLastTime, TimeSpan? sectorBestTime, TimeSpan? sectorOverallBestTime)
         {
-            if (GetCurrentSector() == null || !sectorLastTime.HasValue) return "DimGray";
+            if (GetCurrentSector() == null || !sectorLastTime.HasValue)
+                return "DimGray";
 
             bool isCurrentLap = sectorIndex < GetCurrentSector();
 
-            if (!sectorOverallBestTime.HasValue) return isCurrentLap ? "Fuchsia" : "#FF5A005A";
+            if (!sectorOverallBestTime.HasValue)
+                return isCurrentLap ? "Fuchsia" : "#FF5A005A";
 
             // Bug where opponent.BestSectorN is 1ms higher
-            if (sectorLastTime <= sectorOverallBestTime.Value.Add(TimeSpan.FromMilliseconds(1))) return isCurrentLap ? "Fuchsia" : "#FF5A005A";
-            if (!sectorBestTime.HasValue || sectorLastTime <= sectorBestTime) return isCurrentLap ? "LimeGreen" : "#FF004600";
+            if (sectorLastTime <= sectorOverallBestTime.Value.Add(TimeSpan.FromMilliseconds(1)))
+                return isCurrentLap ? "Fuchsia" : "#FF5A005A";
+
+            if (!sectorBestTime.HasValue || sectorLastTime <= sectorBestTime)
+                return isCurrentLap ? "LimeGreen" : "#FF004600";
+
             return isCurrentLap ? "Yellow" : "#FF4F4F00";
         }
     }

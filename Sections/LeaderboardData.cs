@@ -34,6 +34,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
         {
             if (AllGameData.GameData.GameName == "IRacing")
                 IRacingDrivers = AllGameData.IRacingRawData.SessionData.DriverInfo.CompetingDrivers;
+
             else if (AllGameData.GameData.GameName == "AssettoCorsaCompetizione")
                 AccCars = AllGameData.AccRawData.Cars;
 
@@ -96,6 +97,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
                             Drivers[i].IRacingLicenseColour = IRacingHelper.GetLicenseColour(driver.LicString);
                         }
                     }
+
                     else if (AllGameData.GameData.GameName == "AssettoCorsaCompetizione")
                     {
                         RealtimeCarUpdate car = AccHelper.GetCarByNumber(AllGameData.AccRawData, opponent.CarNumber);
@@ -118,7 +120,6 @@ namespace AidanKay.ExtraDataPlugin.Sections
                 for (int i = 0; i < Opponents.Count; i++)
                 {
                     Opponent opponent = Opponents[i];
-                    Opponent oldOpponent = OldData.Opponents.Where(o => o.CarNumber == opponent.CarNumber).FirstOrDefault(); // DELETE
 
                     Drivers[i].IsConnected = opponent.IsConnected;
 
@@ -139,7 +140,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
                     Drivers[i].Sector2LastLapTime = CommonHelper.MillisecondsToTimeSpan(opponent.LastLapSector2);
                     Drivers[i].Sector3LastLapTime = CommonHelper.MillisecondsToTimeSpan(opponent.LastLapSector3);
 
-                    TimeSpan?[] bestOverallSectors = SectorFunctions.GetOverallBestSectorTimes(NewData);
+                    TimeSpan?[] bestOverallSectors = SectorData.GetOverallBestSectorTimes(NewData);
                     Drivers[i].Sector1LastLapColour = GetLastLapSectorColour(Drivers[i].Sector1LastLapTime, Drivers[i].Sector1BestTime, bestOverallSectors[0]);
                     Drivers[i].Sector2LastLapColour = GetLastLapSectorColour(Drivers[i].Sector2LastLapTime, Drivers[i].Sector2BestTime, bestOverallSectors[1]);
                     Drivers[i].Sector3LastLapColour = GetLastLapSectorColour(Drivers[i].Sector3LastLapTime, Drivers[i].Sector3BestTime, bestOverallSectors[2]);
