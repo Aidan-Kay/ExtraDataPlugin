@@ -37,7 +37,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
         public override void DataUpdate()
         {
-            // Order is intentional (dependancies)
+            // Order is intentional (dependencies)
 
             SetSessionBestLapTimes();
             SessionBestLapColour.Value = GetSessionBestLapColour();
@@ -195,7 +195,11 @@ namespace AidanKay.ExtraDataPlugin.Sections
         private void SetOverallBestLapTimes()
         {
             if (NewData.BestLapOpponent == null)
+            {
+                OverallBestLapTime.Value = null;
+                PreviousOverallBestLapTime.Value = null;
                 return;
+            }
 
             OverallBestLapTime.Value = CommonHelper.NullIf(NewData.BestLapOpponent.BestLapTime, TimeSpan.Zero);
 
