@@ -207,21 +207,21 @@ namespace AidanKay.ExtraDataPlugin.Sections
         private string GetLastSectorColour(int sectorIndex, TimeSpan? sectorLastTime, TimeSpan? sectorBestTime, TimeSpan? sectorOverallBestTime)
         {
             if (GetCurrentSector() == null || !sectorLastTime.HasValue)
-                return "DimGray";
+                return Settings.NullValueColour;
 
             bool isCurrentLap = sectorIndex < GetCurrentSector();
 
             if (!sectorOverallBestTime.HasValue)
-                return isCurrentLap ? "Fuchsia" : "#FF5A005A";
+                return isCurrentLap ? Settings.OverallBestTimeColour : Settings.OverallBestTimeMutedColour;
 
             // Bug where opponent.BestSectorN is 1ms higher
             if (sectorLastTime <= sectorOverallBestTime.Value.Add(TimeSpan.FromMilliseconds(1)))
-                return isCurrentLap ? "Fuchsia" : "#FF5A005A";
+                return isCurrentLap ? Settings.OverallBestTimeColour : Settings.OverallBestTimeMutedColour;
 
             if (!sectorBestTime.HasValue || sectorLastTime <= sectorBestTime)
-                return isCurrentLap ? "LimeGreen" : "#FF004600";
+                return isCurrentLap ? Settings.PersonalBestTimeColour : Settings.PersonalBestTimeMutedColour;
 
-            return isCurrentLap ? "Yellow" : "#FF4F4F00";
+            return isCurrentLap ? Settings.SectorTimeNotImprovedColour : Settings.SectorTimeNotImprovedMutedColour;
         }
     }
 }

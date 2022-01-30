@@ -1,5 +1,4 @@
-﻿using GameReaderCommon;
-using SimHub.Plugins;
+﻿using SimHub.Plugins;
 using System;
 
 namespace AidanKay.ExtraDataPlugin.Sections
@@ -56,6 +55,8 @@ namespace AidanKay.ExtraDataPlugin.Sections
             LastLapTime.Value = GetLastLapTime();
             LastLapColour.Value = GetLastLapColour();
 
+            OptimalLapTime.Value = GetOptimalLapTime();
+
             LastLapDeltaToSessionBest.Value = GetLastLapDeltaToSessionBest();
             LastLapDeltaToAllTimeBest.Value = GetLastLapDeltaToAllTimeBest();
 
@@ -95,7 +96,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
         private bool IsCurrentLapValid()
         {
             if (AllGameData.GameData.GameName == "AssettoCorsaCompetizione")
-                return (int)Plugin.GetPropertyValue("GameRawData.Graphics.isValidLap") == 1;
+                return AllGameData.AccRawData.Graphics.isValidLap == 1;
 
             else if (AllGameData.GameData.GameName == "IRacing")
             {
@@ -124,12 +125,12 @@ namespace AidanKay.ExtraDataPlugin.Sections
         private string GetCurrentLapColour()
         {
             if (CurrentLapTime.Value == null)
-                return "DimGray";
+                return Settings.NullValueColour;
 
             if (!CurrentLapIsValid.Value)
-                return "Red";
+                return Settings.InvalidLapColour;
 
-            return "White";
+            return Settings.GeneralValueColour;
         }
 
         private TimeSpan? GetLastLapTime() =>
@@ -141,12 +142,12 @@ namespace AidanKay.ExtraDataPlugin.Sections
             TimeSpan? sessionBestLap = SessionBestLapTime.Value;
             TimeSpan? overallBestLap = OverallBestLapTime.Value;
 
-            if (lastLap == null) return "DimGray";
-            if (overallBestLap == null) return "Magenta";
-            if (lastLap == overallBestLap) return "Magenta";
-            if (sessionBestLap == null) return "LimeGreen";
-            if (lastLap == sessionBestLap) return "LimeGreen";
-            return "White";
+            if (lastLap == null) return Settings.NullValueColour;
+            if (overallBestLap == null) return Settings.OverallBestTimeColour;
+            if (lastLap == overallBestLap) return Settings.OverallBestTimeColour;
+            if (sessionBestLap == null) return Settings.PersonalBestTimeColour;
+            if (lastLap == sessionBestLap) return Settings.PersonalBestTimeColour;
+            return Settings.GeneralValueColour;
         }
 
         private string GetSessionBestLapColour()
@@ -154,22 +155,22 @@ namespace AidanKay.ExtraDataPlugin.Sections
             TimeSpan? sessionBestLap = SessionBestLapTime.Value;
             TimeSpan? overallBestLap = OverallBestLapTime.Value;
 
-            if (sessionBestLap == null) return "DimGray";
-            if (overallBestLap == null) return "Magenta";
-            if (sessionBestLap == overallBestLap) return "Magenta";
-            return "LimeGreen";
+            if (sessionBestLap == null) return Settings.NullValueColour;
+            if (overallBestLap == null) return Settings.OverallBestTimeColour;
+            if (sessionBestLap == overallBestLap) return Settings.OverallBestTimeColour;
+            return Settings.PersonalBestTimeColour;
         }
 
         private string GetAllTimeBestLapColour()
         {
-            if (AllTimeBestLapTime.Value == null) return "DimGray";
-            return "Magenta";
+            if (AllTimeBestLapTime.Value == null) return Settings.NullValueColour;
+            return Settings.OverallBestTimeColour;
         }
 
         private string GetOverallBestLapColour()
         {
-            if (OverallBestLapTime.Value == null) return "DimGray";
-            return "Magenta";
+            if (OverallBestLapTime.Value == null) return Settings.NullValueColour;
+            return Settings.OverallBestTimeColour;
         }
 
         private void SetSessionBestLapTimes()
@@ -204,6 +205,14 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
             if (CommonHelper.IsDifferent(NewData.BestLapOpponent.BestLapTime, OldData.BestLapOpponent.BestLapTime))
                 PreviousOverallBestLapTime.Value = CommonHelper.NullIf(OldData.BestLapOpponent.BestLapTime, TimeSpan.Zero);
+        }
+
+        private TimeSpan? GetOptimalLapTime()
+        {
+            if (NewData.Sector1BestTime == null || NewData.Sector2BestTime == null || NewData.Sector3BestTime == null)
+                return null;
+
+            return NewData.Sector1BestTime.Value.Add(NewData.Sector2BestTime.Value).Add(NewData.Sector3BestTime.Value);
         }
 
         private double? GetLastLapDeltaToSessionBest()

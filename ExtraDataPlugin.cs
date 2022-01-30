@@ -3,6 +3,8 @@ using GameReaderCommon;
 using SimHub.Plugins;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AidanKay.ExtraDataPlugin
 {
@@ -41,6 +43,8 @@ namespace AidanKay.ExtraDataPlugin
 
         public void DataUpdate(PluginManager pluginManager, ref GameData data)
         {
+            //System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
             if (data.GameRunning && data.NewData != null && data.OldData != null)
             {
                 AllGameData.GameData = data;
@@ -52,8 +56,9 @@ namespace AidanKay.ExtraDataPlugin
                 UpdateAt5Fps = nowTicks - LastRan5Fps >= TicksFor5Fps;
                 UpdateAt10Fps = nowTicks - LastRan10Fps >= TicksFor10Fps;
 
-                foreach (SectionBase section in Sections)
-                    section.DataUpdate();
+                Parallel.ForEach(Sections, section =>
+                    section.DataUpdate()
+                );
 
                 if (UpdateAt1Fps)
                     LastRan1Fps = DateTime.Now.Ticks;
@@ -66,6 +71,9 @@ namespace AidanKay.ExtraDataPlugin
             }
             else
                 ClearAllProperties();
+
+            //stopwatch.Stop();
+            //double time = (double)stopwatch.ElapsedTicks / TimeSpan.TicksPerMillisecond;
         }
 
         private void InitSections()

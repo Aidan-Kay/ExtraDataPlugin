@@ -181,17 +181,17 @@ namespace AidanKay.ExtraDataPlugin.Sections
         private Color GetTyrePressureColour(double? value, ColourGradient gradient)
         {
             if (value == null)
-                return Color.FromName("DimGray");
+                return Color.FromName(Settings.NullValueColour);
 
             return ColourHelper.GradientPick((double)value, gradient);
         }
 
         private void SetTyrePressureColoursToWhite()
         {
-            TyrePressureFrontLeftColour.Value = "White";
-            TyrePressureFrontRightColour.Value = "White";
-            TyrePressureRearLeftColour.Value = "White";
-            TyrePressureRearRightColour.Value = "White";
+            TyrePressureFrontLeftColour.Value = Settings.GeneralValueColour;
+            TyrePressureFrontRightColour.Value = Settings.GeneralValueColour;
+            TyrePressureRearLeftColour.Value = Settings.GeneralValueColour;
+            TyrePressureRearRightColour.Value = Settings.GeneralValueColour;
         }
 
         private void SetTyreTemperatures()
@@ -283,7 +283,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
         private Color GetTyreTemperatureColour(double? value, ColourGradient gradient)
         {
             if (value == null)
-                return Color.FromName("DimGray");
+                return Color.FromName(Settings.NullValueColour);
 
             return ColourHelper.GradientPick((double)value, gradient);
         }

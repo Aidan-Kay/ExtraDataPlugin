@@ -60,17 +60,17 @@ namespace AidanKay.ExtraDataPlugin.Sections
         private Color GetBrakeTemperatureColour(double? value, ColourGradient gradient)
         {
             if (value == null)
-                return Color.FromName("DimGray");
+                return Color.FromName(Settings.NullValueColour);
 
             return ColourHelper.GradientPick((double)value, gradient);
         }
 
         private void SetBrakeTemperatureColoursToWhite()
         {
-            BrakeTemperatureFrontLeftColour.Value = "White";
-            BrakeTemperatureFrontRightColour.Value = "White";
-            BrakeTemperatureRearLeftColour.Value = "White";
-            BrakeTemperatureRearRightColour.Value = "White";
+            BrakeTemperatureFrontLeftColour.Value = Settings.GeneralValueColour;
+            BrakeTemperatureFrontRightColour.Value = Settings.GeneralValueColour;
+            BrakeTemperatureRearLeftColour.Value = Settings.GeneralValueColour;
+            BrakeTemperatureRearRightColour.Value = Settings.GeneralValueColour;
         }
     }
 }

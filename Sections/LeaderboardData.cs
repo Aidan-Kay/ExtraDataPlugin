@@ -1,12 +1,10 @@
-﻿using ACSharedMemory.ACC.Reader;
-using GameReaderCommon;
-using IRacingReader;
-using iRacingSDK;
+﻿using GameReaderCommon;
 using ksBroadcastingNetwork.Structs; // ACC
 using SimHub.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AidanKay.ExtraDataPlugin.Sections
 {
@@ -21,7 +19,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
         private List<Opponent> Opponents;
 
         // Sort order mirrors NewData.Opponents
-        public Driver[] Drivers = new Driver[50];
+        public Driver[] Drivers = new Driver[Settings.LeaderboardNumberOfDrivers];
 
         public Dictionary<int, Driver> DriversByPosition = new Dictionary<int, Driver>();
 
@@ -71,7 +69,7 @@ namespace AidanKay.ExtraDataPlugin.Sections
             // Mostly static data - no need to keep updating frequently
             if (updateAll)
             {
-                for (int i = 0; i < Opponents.Count; i++)
+                Parallel.For(0, Opponents.Count, i =>
                 {
                     Opponent opponent = Opponents[i];
 
@@ -110,14 +108,14 @@ namespace AidanKay.ExtraDataPlugin.Sections
                             Drivers[i].CarClassTextColour = AccHelper.GetCarLicenseTextColour(car.CarEntry.CupCategory);
                         }
                     }
-                }
+                });
 
                 StaticDriverDataLoaded = true;
             }
 
-            if (Plugin.UpdateAt1Fps || updateAll)
+            if (Plugin.UpdateAt5Fps || updateAll)
             {
-                for (int i = 0; i < Opponents.Count; i++)
+                Parallel.For(0, Opponents.Count, i =>
                 {
                     Opponent opponent = Opponents[i];
 
@@ -151,13 +149,19 @@ namespace AidanKay.ExtraDataPlugin.Sections
 
                     Drivers[i].InPitLane = opponent.IsCarInPitLane;
                     Drivers[i].InPitBox = opponent.IsCarInPit;
-                }
+                });
 
-                for (int i = 0; i <= Opponents.Count; i++)
-                    DriversByPosition[i + 1] = Drivers
-                        .OrderBy(x => x.Position == 0)
-                        .ThenBy(x => x.Position)
-                        .ElementAt(i);
+                // If setting positions manually i.e. using lap distance, will use the below. Prop delegates would be e.g. DriversByPosition[i + 1].Name
+
+                //SetPositions();
+                //SetPositionInClass();
+
+                //var orderedDrivers = Drivers
+                //    .OrderBy(x => x.Position == 0)
+                //    .ThenBy(x => x.Position);
+
+                //for (int i = 0; i < Opponents.Count; i++)
+                //    DriversByPosition[i + 1] = orderedDrivers.ElementAt(i);
             }
         }
 
@@ -182,55 +186,53 @@ namespace AidanKay.ExtraDataPlugin.Sections
         {
             for (int i = 0; i < Drivers.Length; ++i)
             {
-                int pos = i + 1;
+                string propPrefix = $"LeaderboardData.Position{i + 1:00}.";
 
-                string propPrefix = $"LeaderboardData.Position{pos:00}.";
+                Plugin.AttachDelegate($"{propPrefix}Name", () => Drivers[i].Name);
 
-                Plugin.AttachDelegate($"{propPrefix}Name", () => DriversByPosition[pos].Name);
+                Plugin.AttachDelegate($"{propPrefix}IsConnected", () => Drivers[i].IsConnected);
+                Plugin.AttachDelegate($"{propPrefix}IsPlayer", () => Drivers[i].IsPlayer);
 
-                Plugin.AttachDelegate($"{propPrefix}IsConnected", () => DriversByPosition[pos].IsConnected);
-                Plugin.AttachDelegate($"{propPrefix}IsPlayer", () => DriversByPosition[pos].IsPlayer);
+                Plugin.AttachDelegate($"{propPrefix}Position", () => Drivers[i].Position);
+                Plugin.AttachDelegate($"{propPrefix}PositionInClass", () => Drivers[i].PositionInClass);
 
-                Plugin.AttachDelegate($"{propPrefix}Position", () => DriversByPosition[pos].Position);
-                Plugin.AttachDelegate($"{propPrefix}PositionInClass", () => DriversByPosition[pos].PositionInClass);
+                Plugin.AttachDelegate($"{propPrefix}iRacing.iRating", () => Drivers[i].IRacingIRating);
+                Plugin.AttachDelegate($"{propPrefix}iRacing.LicenseText", () => Drivers[i].IRacingLicenseText);
+                Plugin.AttachDelegate($"{propPrefix}iRacing.LicenseTextColour", () => Drivers[i].IRacingLicenseTextColour);
+                Plugin.AttachDelegate($"{propPrefix}iRacing.LicenseColour", () => Drivers[i].IRacingLicenseColour);
 
-                Plugin.AttachDelegate($"{propPrefix}iRacing.iRating", () => DriversByPosition[pos].IRacingIRating);
-                Plugin.AttachDelegate($"{propPrefix}iRacing.LicenseText", () => DriversByPosition[pos].IRacingLicenseText);
-                Plugin.AttachDelegate($"{propPrefix}iRacing.LicenseTextColour", () => DriversByPosition[pos].IRacingLicenseTextColour);
-                Plugin.AttachDelegate($"{propPrefix}iRacing.LicenseColour", () => DriversByPosition[pos].IRacingLicenseColour);
+                Plugin.AttachDelegate($"{propPrefix}CarName", () => Drivers[i].CarName);
+                Plugin.AttachDelegate($"{propPrefix}CarClass", () => Drivers[i].CarClass);
+                Plugin.AttachDelegate($"{propPrefix}CarClassColour", () => Drivers[i].CarClassColour);
+                Plugin.AttachDelegate($"{propPrefix}CarClassTextColour", () => Drivers[i].CarClassTextColour);
 
-                Plugin.AttachDelegate($"{propPrefix}CarName", () => DriversByPosition[pos].CarName);
-                Plugin.AttachDelegate($"{propPrefix}CarClass", () => DriversByPosition[pos].CarClass);
-                Plugin.AttachDelegate($"{propPrefix}CarClassColour", () => DriversByPosition[pos].CarClassColour);
-                Plugin.AttachDelegate($"{propPrefix}CarClassTextColour", () => DriversByPosition[pos].CarClassTextColour);
+                Plugin.AttachDelegate($"{propPrefix}CurrentLap", () => Drivers[i].CurrentLap);
+                Plugin.AttachDelegate($"{propPrefix}CurrentLapDistance", () => Drivers[i].CurrentLapDistance);
+                Plugin.AttachDelegate($"{propPrefix}LapsCompleted", () => Drivers[i].LapsCompleted);
 
-                Plugin.AttachDelegate($"{propPrefix}CurrentLap", () => DriversByPosition[pos].CurrentLap);
-                Plugin.AttachDelegate($"{propPrefix}CurrentLapDistance", () => DriversByPosition[pos].CurrentLapDistance);
-                Plugin.AttachDelegate($"{propPrefix}LapsCompleted", () => DriversByPosition[pos].LapsCompleted);
+                Plugin.AttachDelegate($"{propPrefix}GapToLeader", () => Drivers[i].GapToLeader);
+                Plugin.AttachDelegate($"{propPrefix}IntervalGap", () => Drivers[i].IntervalGap);
 
-                Plugin.AttachDelegate($"{propPrefix}GapToLeader", () => DriversByPosition[pos].GapToLeader);
-                Plugin.AttachDelegate($"{propPrefix}IntervalGap", () => DriversByPosition[pos].IntervalGap);
+                Plugin.AttachDelegate($"{propPrefix}LastLapTime", () => Drivers[i].LastLapTime);
+                Plugin.AttachDelegate($"{propPrefix}LastLapColour", () => Drivers[i].LastLapColour);
 
-                Plugin.AttachDelegate($"{propPrefix}LastLapTime", () => DriversByPosition[pos].LastLapTime);
-                Plugin.AttachDelegate($"{propPrefix}LastLapColour", () => DriversByPosition[pos].LastLapColour);
+                Plugin.AttachDelegate($"{propPrefix}BestLapTime", () => Drivers[i].BestLapTime);
+                Plugin.AttachDelegate($"{propPrefix}BestLapColour", () => Drivers[i].BestLapColour);
 
-                Plugin.AttachDelegate($"{propPrefix}BestLapTime", () => DriversByPosition[pos].BestLapTime);
-                Plugin.AttachDelegate($"{propPrefix}BestLapColour", () => DriversByPosition[pos].BestLapColour);
+                Plugin.AttachDelegate($"{propPrefix}Sector1LastLapTime", () => Drivers[i].Sector1LastLapTime);
+                Plugin.AttachDelegate($"{propPrefix}Sector2LastLapTime", () => Drivers[i].Sector2LastLapTime);
+                Plugin.AttachDelegate($"{propPrefix}Sector3LastLapTime", () => Drivers[i].Sector3LastLapTime);
 
-                Plugin.AttachDelegate($"{propPrefix}Sector1LastLapTime", () => DriversByPosition[pos].Sector1LastLapTime);
-                Plugin.AttachDelegate($"{propPrefix}Sector2LastLapTime", () => DriversByPosition[pos].Sector2LastLapTime);
-                Plugin.AttachDelegate($"{propPrefix}Sector3LastLapTime", () => DriversByPosition[pos].Sector3LastLapTime);
+                Plugin.AttachDelegate($"{propPrefix}Sector1BestTime", () => Drivers[i].Sector1BestTime);
+                Plugin.AttachDelegate($"{propPrefix}Sector2BestTime", () => Drivers[i].Sector2BestTime);
+                Plugin.AttachDelegate($"{propPrefix}Sector3BestTime", () => Drivers[i].Sector3BestTime);
 
-                Plugin.AttachDelegate($"{propPrefix}Sector1BestTime", () => DriversByPosition[pos].Sector1BestTime);
-                Plugin.AttachDelegate($"{propPrefix}Sector2BestTime", () => DriversByPosition[pos].Sector2BestTime);
-                Plugin.AttachDelegate($"{propPrefix}Sector3BestTime", () => DriversByPosition[pos].Sector3BestTime);
+                Plugin.AttachDelegate($"{propPrefix}Sector1LastLapColour", () => Drivers[i].Sector1LastLapColour);
+                Plugin.AttachDelegate($"{propPrefix}Sector2LastLapColour", () => Drivers[i].Sector2LastLapColour);
+                Plugin.AttachDelegate($"{propPrefix}Sector3LastLapColour", () => Drivers[i].Sector3LastLapColour);
 
-                Plugin.AttachDelegate($"{propPrefix}Sector1LastLapColour", () => DriversByPosition[pos].Sector1LastLapColour);
-                Plugin.AttachDelegate($"{propPrefix}Sector2LastLapColour", () => DriversByPosition[pos].Sector2LastLapColour);
-                Plugin.AttachDelegate($"{propPrefix}Sector3LastLapColour", () => DriversByPosition[pos].Sector3LastLapColour);
-
-                Plugin.AttachDelegate($"{propPrefix}InPitLane", () => DriversByPosition[pos].InPitLane);
-                Plugin.AttachDelegate($"{propPrefix}InPitBox", () => DriversByPosition[pos].InPitBox);
+                Plugin.AttachDelegate($"{propPrefix}InPitLane", () => Drivers[i].InPitLane);
+                Plugin.AttachDelegate($"{propPrefix}InPitBox", () => Drivers[i].InPitBox);
             }
         }
 
@@ -252,9 +254,9 @@ namespace AidanKay.ExtraDataPlugin.Sections
                 Drivers[i].Position = orderedPositions.IndexOf(i) + 1;
         }
 
-        public void SetPositionInClass(Driver[] drivers)
+        public void SetPositionInClass()
         {
-            foreach (string carClass in drivers.Where(d => d.CarClass != null).Select(d => d.CarClass).Distinct())
+            foreach (string carClass in Drivers.Where(d => d.CarClass != null).Select(d => d.CarClass).Distinct())
             {
                 var driversInClass = Drivers.Where(d => d.CarClass == carClass).OrderBy(d => d.Position).ToList();
                 foreach (Driver driver in driversInClass)
@@ -291,34 +293,34 @@ namespace AidanKay.ExtraDataPlugin.Sections
         public string GetLastLapColour(Driver driver)
         {
             if (driver.LastLapTime == null)
-                return "DimGray";
+                return Settings.NullValueColour;
 
             if (NewData.BestLapOpponent == null)
-                return "White";
+                return Settings.GeneralValueColour;
 
             TimeSpan? overallBestLapTime = CommonHelper.NullIf(NewData.BestLapOpponent.BestLapTime, TimeSpan.Zero);
-            return driver.LastLapTime == overallBestLapTime ? "Magenta" : "White";
+            return driver.LastLapTime == overallBestLapTime ? Settings.OverallBestTimeColour : Settings.GeneralValueColour;
         }
 
         public string GetBestLapColour(Driver driver)
         {
             if (driver.BestLapTime == null)
-                return "DimGray";
+                return Settings.NullValueColour;
 
             if (NewData.BestLapOpponent == null)
-                return "White";
+                return Settings.GeneralValueColour;
 
             TimeSpan? overallBestLapTime = CommonHelper.NullIf(NewData.BestLapOpponent.BestLapTime, TimeSpan.Zero);
-            return driver.BestLapTime == overallBestLapTime ? "Magenta" : "White";
+            return driver.BestLapTime == overallBestLapTime ? Settings.OverallBestTimeColour : Settings.GeneralValueColour;
         }
 
         public string GetLastLapSectorColour(TimeSpan? lastSector, TimeSpan? bestSector, TimeSpan? bestOverallSector)
         {
-            if (lastSector == null) return "DimGray";
-            if (lastSector == bestOverallSector) return "Magenta";
-            if (bestSector == null) return "LimeGreen";
-            if (lastSector == bestSector) return "LimeGreen";
-            return "Yellow";
+            if (lastSector == null) return Settings.NullValueColour;
+            if (lastSector == bestOverallSector) return Settings.OverallBestTimeColour;
+            if (bestSector == null) return Settings.PersonalBestTimeColour;
+            if (lastSector == bestSector) return Settings.PersonalBestTimeColour;
+            return Settings.SectorTimeNotImprovedColour;
         }
     }
 }
