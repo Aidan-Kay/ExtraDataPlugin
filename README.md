@@ -7,11 +7,6 @@ Main additions include extra leaderboard data and colour gradients with any numb
 - Better laps remaining estimation
 - Fuel to add estimation
 
-Leaderboard data:
-- iRacing incident count
-- Pit count
-- Last pit lap
-
 New features:
 - NCalc Changed() equivalent
-- Ability to save optimal clutch bites per car for dual clutch paddles
+- Ability to save optimal clutch bites per car for dual clutch paddles?
